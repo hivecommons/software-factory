@@ -198,7 +198,7 @@
   .sf-floor .rlink { stroke: var(--amber); stroke-width: 1.2; stroke-dasharray: 3 4; fill: none; }
   .sf-floor .rsplit .rdoc text, .sf-floor .rsplit .rtile text { fill: var(--g1); font-size: 12px; font-weight: 700; text-anchor: middle; letter-spacing: .06em; }
   .sf-floor .rsplit .rtile rect { fill: var(--bg); stroke: var(--g1); stroke-width: 1.4; }
-  .sf-floor .rsplit .rtile.is-taken rect { stroke: var(--amber); fill: var(--amber-dim, rgba(240,180,41,.18)); } .sf-floor .rsplit .rtile.is-taken text { fill: var(--amber); }
+  .sf-floor .rsplit .rtile.is-taken rect { stroke: var(--amber2); fill: var(--amber); } .sf-floor .rsplit .rtile.is-taken text { fill: var(--ink); }
   .sf-floor .glyph.is-split .ln, .sf-floor .glyph.human.is-split .ln { stroke: var(--amber); } .sf-floor .glyph.is-split .lnp { color: var(--amber); }
   .sf-floor .token .src.long { letter-spacing: .03em; font-size: 11px; }
   .sf-floor .token.is-low .src { stroke: var(--bg); }
@@ -263,8 +263,8 @@
   .sf-pause.is-paused .ic-play { display: block; } .sf-pause.is-paused .ic-pause { display: none; }
   .sf-pause:hover { border-color: var(--amber); }
   .sf-pause:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
-  .sf.is-present .sf-ctl { opacity: .18; transition: opacity .25s; }
-  .sf.is-present .sf-ctl:hover, .sf.is-present .sf-ctl:focus-within, .sf.is-present.show-ui .sf-ctl { opacity: 1; }
+  .sf.is-present .sf-ctl { opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .sf.is-present .sf-ctl:hover, .sf.is-present .sf-ctl:focus-within, .sf.is-present.show-ui .sf-ctl { opacity: 1; pointer-events: auto; }
 
   /* focus: one thing lit at a time */
   .sf-floor .bg, .sf-floor .cell:not(.is-active), .sf-floor .cell-name:not(.is-active), .sf-floor .glyph:not(.is-active), .sf-lane, .sf-seg:not(.active) { opacity: .4; transition: opacity 1.2s ease; }
@@ -588,7 +588,7 @@ window.addEventListener('error', function (e) { window.__sfErr = e.message + ' @
   var knowPos = knowStop ? [cellPos[knowStop.cell].xy[0] + 1.5 * R, cellPos[knowStop.cell].xy[1] - 2.45 * R] : null; // its own thing, top-right above Implement
   // intake cluster above Spek: source nodes feed one drop into the belt just before Spek
   var INPUTS = [{ k: 'GitHub', l: 'GitHub' }, { k: 'Jira', l: 'Jira' }, { k: 'Linear', l: 'Linear' }, { k: 'Projects', l: 'GitHub Projects' }, { k: 'DIBS', l: 'DIBS' }];
-  var inCell = cellName.findIndex(function (n) { return n.indexOf('Issue') === 0; }); if (inCell < 0) inCell = cellName.indexOf('Spek'); var inPos = inCell >= 0 ? cellPos[inCell].xy : null, inNodes = [], inBusY = 0, inDrop = null;
+  var inCell = cellName.findIndex(function (n) { return /Issue/.test(n); }); if (inCell < 0) inCell = cellName.indexOf('Spek'); var inPos = inCell >= 0 ? cellPos[inCell].xy : null, inNodes = [], inBusY = 0, inDrop = null;
   // Spek does not feed RFC/Issue directly: the spec goes into the work-sources cluster (forges, trackers) and the cluster drops the filed item onto the belt
   var spekCell = cellName.indexOf('Spek'), spekPos = spekCell >= 0 && inCell >= 0 && spekCell < inCell ? cellPos[spekCell].xy : null, spekIngress = null;
   if (inPos) { var nx = 0, widths = INPUTS.map(function (n) { return n.l.length * 6.6 + 18; }), tot = widths.reduce(function (a, b) { return a + b + 12; }, -12), y0 = inPos[1] - 2.6 * R; nx = spekPos ? spekPos[0] + 0.7 * R : inPos[0] + 1.5 * R - tot / 2; inBusY = y0 + 34;
