@@ -265,6 +265,8 @@
   .sf-pause:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
   .sf.is-present .sf-ctl { opacity: 0; pointer-events: none; transition: opacity .25s; }
   .sf.is-present .sf-ctl:hover, .sf.is-present .sf-ctl:focus-within, .sf.is-present.show-ui .sf-ctl { opacity: 1; pointer-events: auto; }
+  .sf.is-public.is-present .sf-ctl { opacity: .55; pointer-events: auto; }
+  .sf.is-public.is-present .sf-ctl:hover, .sf.is-public.is-present .sf-ctl:focus-within, .sf.is-public.is-present.show-ui .sf-ctl { opacity: 1; }
 
   /* focus: one thing lit at a time */
   .sf-floor .bg, .sf-floor .cell:not(.is-active), .sf-floor .cell-name:not(.is-active), .sf-floor .glyph:not(.is-active), .sf-lane, .sf-seg:not(.active) { opacity: .4; transition: opacity 1.2s ease; }
@@ -426,7 +428,8 @@
   <svg class="sf-floor" aria-hidden="true"></svg>
   <svg class="sf-lane" aria-hidden="true"></svg>
   <div class="sf-hud"><h2 class="sf-title"></h2><p class="sf-sub"></p><p class="sf-live"></p></div><div class="sf-example" aria-hidden="true">example data · costs illustrative (≈ $9 / issue + ≈ $9 / PR)</div>
-  
+  <div class="sf-ctl"><div class="sf-dd sf-speed" title="Playback speed · keys [ ] step, 0 resets"></div>
+    <button class="sf-pause" type="button" aria-pressed="false" aria-label="Pause"><svg class="ic-pause" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="11.8" y="3" width="4.2" height="14" rx="1.2" fill="currentColor"/></svg><svg class="ic-play" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3.4v13.2c0 .9 1 1.5 1.8 1L17.4 11c.8-.5.8-1.6 0-2L7.8 2.4C7 1.9 6 2.5 6 3.4z" fill="currentColor"/></svg></button></div>
   <div class="sf-cards" aria-live="polite"></div>
   <aside class="sf-ledger" aria-label="Record"><div class="sf-ledger-h"><span>Record</span><span class="n"></span></div><div class="vp"><div class="fade"></div><ol></ol></div></aside>
   <ol class="sf-chev" aria-label="Pipeline progress"></ol>
@@ -440,6 +443,7 @@ window.addEventListener('error', function (e) { window.__sfErr = e.message + ' @
   'use strict';
   var root = document.currentScript.closest('.sf');
   var ALL = JSON.parse(root.querySelector('[data-sf-config]').textContent), FLOWS = Object.keys(ALL.flows);
+  if (ALL.public) root.classList.add('is-public');
   var params = new URLSearchParams(location.search);
   var flowEl = root.querySelector('.sf-flow'), speedEl = root.querySelector('.sf-speed'), inst = null, curFlow = null;
   // playback speed: one global time scale (every beat — hero, belt, lane, Record, knowledge, chevrons, cost — runs off the same logical clock, so this scales all of it).
@@ -498,7 +502,7 @@ window.addEventListener('error', function (e) { window.__sfErr = e.message + ' @
     root.sf = inst.api; window.__sf = inst.api;
   }
   root.addEventListener('keydown', function (e) {
-    if (ALL.public) return; // public build: no speed / flow keys
+    if (ALL.public && e.key >= '1' && e.key <= '9') return; // public build: no flow keys
     if (e.target !== root && !e.target.closest('.sf-ctl')) return;
     if (openDD && e.target.closest('.sf-dd-menu')) return; // arrows/enter inside an open menu belong to the listbox
     if (e.key === '[') { e.preventDefault(); stepSpeed(-1); return; } if (e.key === ']') { e.preventDefault(); stepSpeed(1); return; } if (e.key === '0') { e.preventDefault(); setSpeed(1); return; }
@@ -1530,7 +1534,7 @@ window.addEventListener('error', function (e) { window.__sfErr = e.message + ' @
   on(root, 'keydown', function (e) {
     if (e.target !== root && e.target !== pauseBtn) return;
     var k = e.key.toLowerCase();
-    if (ALL.public && !(e.key === ' ' || k === 'k')) return; // public build: Space / K pause only, silently
+    if (ALL.public && (k === 'p' || k === 'f')) return; // public build: no present-mode toggle
     if (e.key === '[' || e.key === ']' || e.key === '0') return; // handled by the speed control
     if (e.key === ' ' || k === 'k') { e.preventDefault(); stopAt = null; setPaused(!paused); }
     if (k === 'p' || k === 'f') { e.preventDefault(); setPresent(!root.classList.contains('is-present')); showUi(); }
