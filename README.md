@@ -9,7 +9,6 @@ embedded as the hero section of [hivecommons.dev](https://hivecommons.dev).
 
 | Param | Values | Notes |
 | --- | --- | --- |
-| `flow` | `spek` \| `full` | `spek` = Spek → Hive; `full` = Spotlight → Nous → Spek → Hive |
 | `speed` | number | relative to the default tempo (`1` = default) |
 | `mode` | `present` | hides the page chrome (used by the homepage embed) |
 | `theme` | `light` \| `dark` | omit to follow `prefers-color-scheme` |
@@ -17,14 +16,16 @@ embedded as the hero section of [hivecommons.dev](https://hivecommons.dev).
 | `motion` | `reduce` | reduced-motion variant |
 | `t` | ms | freeze the animation at a point in time |
 
-Example: <https://hivecommons.dev/software-factory/?flow=spek&speed=1&mode=present>
+Example: <https://hivecommons.dev/software-factory/?speed=1&mode=present>
 
 ## Re-syncing
 
-`index.html` is copied verbatim from the authoring build; do not edit it here.
+`index.html` is copied verbatim from the **public** authoring build (`software-factory-public.html`,
+Spek → Hive only); do not edit it here. The internal build (`software-factory.html`, with the
+extended flow) is not published.
 
 ```sh
-cp ~/Downloads/software-factory.html index.html && git commit -s -am "sync" && git push
+cp ~/Downloads/software-factory-public.html index.html && git commit -s -am "sync animation" && git push
 ```
 
 ## License
